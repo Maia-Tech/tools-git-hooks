@@ -16,7 +16,7 @@ fi
 temp_dir="$(mktemp -d)"
 
 # Clone the repository into the temporary directory
-git clone git@github.com:Maia-Tech/tools-git-hooks.git "$temp_dir"
+git clone git@github.com:Maia-Tech/tools-git-hooks.git "$temp_dir" > /dev/null 2>&1
 if [ $? -ne 0 ]; then
     echo "Error: Failed to clone the tools-git-hooks repo"
     exit 1
