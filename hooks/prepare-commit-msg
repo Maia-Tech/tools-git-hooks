@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Get the current branch name
+branch_name="$(git rev-parse --abbrev-ref HEAD)"
+
+# Extract the issue key from the branch name
+issue_key="$(echo "$branch_name" | grep -oE 'ENG-[0-9]+')"
+
+# Check if an issue key was found
+if [ -n "$issue_key" ]; then
+  echo ""
+  # Prepend the issue key and #time to the commit message
+  sed -i.bak -e "1s/^/$issue_key #time /" "$1"
+fi
