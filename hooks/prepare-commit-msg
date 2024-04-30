@@ -1,14 +1,23 @@
 #!/bin/bash
 
+COMMIT_MSG_FILE=$1
+COMMIT_SOURCE=$2
+SHA1=$3
+
+if [ -n "$COMMIT_SOURCE" ]; then
+    # Do not change amended commits
+    if [ "$COMMIT_SOURCE" == "commit" ]; then
+        exit 0
+    fi
+fi
+
 # Get the current branch name
 branch_name="$(git rev-parse --abbrev-ref HEAD)"
 
 # Extract the issue key from the branch name
-issue_key="$(echo "$branch_name" | grep -oE 'ENG-[0-9]+')"
+issue_key="$(echo "$branch_name" | grep -ioE 'ENG-[0-9]+' | tr '[:lower:]' '[:upper:]')"
 
-# Check if an issue key was found
-if [ -n "$issue_key" ]; then
-  echo ""
+if [[ -n "$issue_key" ]]; then
   # Prepend the issue key and #time to the commit message
-  sed -i.bak -e "1s/^/$issue_key #time /" "$1"
+  sed -i.bak -e "1s/^/\n\n$issue_key /" "$1"
 fi
