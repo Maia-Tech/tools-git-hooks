@@ -22,8 +22,10 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# Copy the prepare-commit-msg hook file to the .git/hooks directory
-cp "$temp_dir/hooks/prepare-commit-msg" ".git/hooks/"
+# Copy the hook files to the .git/hooks directory
+for hook in prepare-commit-msg commit-msg; do
+    cp "$temp_dir/hooks/${hook}" ".git/hooks/"
+done
 
 # Make the hook file executable
 chmod +x ".git/hooks/prepare-commit-msg"
