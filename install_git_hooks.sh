@@ -25,12 +25,10 @@ fi
 # Copy the hook files to the .git/hooks directory
 for hook in prepare-commit-msg commit-msg; do
     cp "$temp_dir/hooks/${hook}" ".git/hooks/"
+    chmod +x ".git/hooks/${hook}"
+    echo "${hook} hook installed successfully."
 done
 
-# Make the hook file executable
-chmod +x ".git/hooks/prepare-commit-msg"
 
 # Clean up the temporary directory
 rm -rf "$temp_dir"
-
-echo "prepare-commit-msg hook installed successfully."
