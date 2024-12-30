@@ -12,23 +12,29 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# Create a temporary directory
-temp_dir="$(mktemp -d)"
+# Define the tools repo remote URL
+tools_repo="git@github.com:Maia-Tech/tools-git-hooks.git"
 
-# Clone the repository into the temporary directory
-git clone git@github.com:Maia-Tech/tools-git-hooks.git "$temp_dir" > /dev/null 2>&1
-if [ $? -ne 0 ]; then
-    echo "Error: Failed to clone the tools-git-hooks repo"
-    exit 1
+# Check if the current repo is already the tools-git-hooks repo
+current_remote=$(git remote -v | grep -m 1 "origin.*fetch" | awk '{print $2}')
+if [ "$current_remote" = "$tools_repo" ]; then
+    # We're already in the tools-git-hooks repo, use current directory
+    source_dir="${git_top_level}"
+else
+    # Create a temporary directory and clone the repo
+    source_dir="$(mktemp -d)"
+    git clone "$tools_repo" "${source_dir}" > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+        echo "Error: Failed to clone the tools-git-hooks repo"
+        exit 1
+    fi
+
+    trap "rm -rf ${source_dir}" EXIT
 fi
 
 # Copy the hook files to the .git/hooks directory
 for hook in prepare-commit-msg commit-msg; do
-    cp "$temp_dir/hooks/${hook}" ".git/hooks/"
+    cp -f "${source_dir}/hooks/${hook}" ".git/hooks/"
     chmod +x ".git/hooks/${hook}"
     echo "${hook} hook installed successfully."
 done
-
-
-# Clean up the temporary directory
-rm -rf "$temp_dir"

@@ -28,5 +28,12 @@ if ! echo "$commitTitle" | grep -qE '^(feat|fix|docs|style|refactor|perf|test|ch
 	echo "Please see"
 	echo "- https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#commit-message-format"
 	echo "- https://www.conventionalcommits.org/en/v1.0.0/#summary"
+	echo ""
+	echo ""
+    echo "Tip: To edit and recommit use the following commands:"
+    echo ""
+    echo "git add <files>  # OR use -a argument below"
+    echo "git commit --edit --file=.git/COMMIT_EDITMSG"
+    echo ""
 	exit 1
 fi

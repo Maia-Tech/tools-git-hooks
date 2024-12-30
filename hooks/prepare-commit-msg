@@ -23,11 +23,14 @@ branch_name="$(git rev-parse --abbrev-ref HEAD)"
 issue_key="$(echo "$branch_name" | grep -ioE 'ENG-[0-9]+' | tr '[:lower:]' '[:upper:]')"
 
 if [[ -n "$issue_key" ]]; then
-  if [ "$COMMIT_SOURCE" == "message" ]; then
-    # Append the issue key to the end of the commit message for message source
-    echo -e "\n$issue_key" >> "$COMMIT_MSG_FILE"
-  else
-    # Prepend the issue key to the commit message for other sources
-    sed -i.bak -e "1s/^/\n\n$issue_key /" "$COMMIT_MSG_FILE"
+  # Check if issue key already exists in the commit message
+  if ! grep -q "$issue_key" "$COMMIT_MSG_FILE"; then
+    if [ "$COMMIT_SOURCE" == "message" ]; then
+      # Append the issue key to the end of the commit message for message source
+      echo -e "\n$issue_key" >> "$COMMIT_MSG_FILE"
+    else
+      # Prepend the issue key to the commit message for other sources
+      sed -i.bak -e "1s/^/\n\n$issue_key /" "$COMMIT_MSG_FILE"
+    fi
   fi
 fi
