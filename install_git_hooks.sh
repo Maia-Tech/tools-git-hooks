@@ -12,6 +12,8 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+pushd "${git_top_level}" || exit 1
+
 # Define the tools repo remote URL
 tools_repo="git@github.com:Maia-Tech/tools-git-hooks.git"
 
@@ -22,7 +24,7 @@ if [ "$current_remote" = "$tools_repo" ]; then
     source_dir="${git_top_level}"
 else
     # Create a temporary directory and clone the repo
-    source_dir="$(mktemp -d)"
+    source_dir="$(mktemp -d)" || exit 1
     git clone "$tools_repo" "${source_dir}" > /dev/null 2>&1
     if [ $? -ne 0 ]; then
         echo "Error: Failed to clone the tools-git-hooks repo"
