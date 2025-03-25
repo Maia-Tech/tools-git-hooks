@@ -5,6 +5,9 @@
 # Otherwise, it prepends the issue key to the commit message in a way which makes it
 # convenient to use with an editor
 
+# Array of supported issue key prefixes
+ISSUE_PREFIXES=("ENG" "CLO" "INF" "PLT" "UI")
+
 COMMIT_MSG_FILE=$1
 COMMIT_SOURCE=$2
 SHA1=$3
@@ -19,8 +22,15 @@ fi
 # Get the current branch name
 branch_name="$(git rev-parse --abbrev-ref HEAD)"
 
-# Extract the issue key from the branch name
-issue_key="$(echo "$branch_name" | grep -ioE 'ENG-[0-9]+' | tr '[:lower:]' '[:upper:]')"
+# Extract the issue key from the branch name using any of the supported prefixes
+issue_key=""
+for prefix in "${ISSUE_PREFIXES[@]}"; do
+  found_key="$(echo "$branch_name" | grep -ioE "$prefix-[0-9]+" | tr '[:lower:]' '[:upper:]')"
+  if [[ -n "$found_key" ]]; then
+    issue_key="$found_key"
+    break
+  fi
+done
 
 if [[ -n "$issue_key" ]]; then
   # Check if issue key already exists in the commit message
